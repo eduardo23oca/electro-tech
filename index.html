@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tienda ElectroTech</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f7fa; }
+    header { background-color: #2c3e50; color: #fff; padding: 20px; text-align: center; background-image: url('https://images.unsplash.com/photo-1518770660439-4636190af475?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1200'); background-size: cover; background-position: center; position: relative; }
+    header h1 { margin: 0; font-size: 2.5rem; text-shadow: 2px 2px 5px rgba(0,0,0,0.7); }
+    header p { font-size: 1.2rem; }
+    nav { background-color: #34495e; padding: 10px; text-align: center; }
+    nav a { color: #ecf0f1; margin: 0 15px; text-decoration: none; font-weight: bold; }
+    nav a:hover { text-decoration: underline; }
+    .hero { background: url('https://images.unsplash.com/photo-1535223289827-42f1e9919769?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1200') no-repeat center center/cover; color: white; padding: 70px 20px; text-align: center; border-radius: 0 0 30px 30px; }
+    .hero h2 { font-size: 2rem; margin-bottom: 15px; }
+    .products, .features, .contact-section { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; padding: 30px; }
+    .product, .feature, .contact-info { background: #fff; padding: 20px; border-radius: 20px; box-shadow: 0 6px 12px rgba(0,0,0,0.1); text-align: center; transition: transform 0.3s; }
+    .product:hover, .feature:hover, .contact-info:hover { transform: translateY(-10px); }
+    .product img, .feature img { width: 100%; height: 200px; object-fit: cover; border-radius: 12px; }
+    button { padding: 10px 20px; border: none; background-color: #1abc9c; color: white; border-radius: 12px; cursor: pointer; font-size: 1rem; }
+    button:hover { background-color: #16a085; }
+    footer { background-color: #2c3e50; color: #bdc3c7; padding: 15px; text-align: center; margin-top: 30px; }
+    .product-price { font-weight: bold; color: #2c3e50; margin: 10px 0; font-size: 1.2rem; }
+    
+    /* Estilos para el carrito flotante */
+    .floating-cart {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background-color: #2c3e50;
+      color: white;
+      border-radius: 50%;
+      width: 70px;
+      height: 70px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      z-index: 999;
+      transition: all 0.3s ease;
+    }
+    .floating-cart:hover {
+      transform: scale(1.1);
+      background-color: #1abc9c;
+    }
+    .floating-cart i {
+      font-size: 1.8rem;
+      margin-bottom: 3px;
+    }
+    .floating-cart .cart-count {
+      background-color: #e74c3c;
+      color: white;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 0.8rem;
+      position: absolute;
+      top: -5px;
+      right: -5px;
+    }
+    
+    /* Modal del carrito mejorado */
+    .cart-modal { 
+      display: none; 
+      position: fixed; 
+      top: 0; 
+      right: 0; 
+      width: 380px; 
+      height: 100%; 
+      background-color: white; 
+      box-shadow: -2px 0 15px rgba(0,0,0,0.2); 
+      z-index: 1000;
+      overflow-y: auto;
+      animation: slideIn 0.3s forwards;
+    }
+    @keyframes slideIn {
+      from { transform: translateX(100%); }
+      to { transform: translateX(0); }
+    }
+    .cart-header { 
+      background-color: #2c3e50; 
+      color: white; 
+      padding: 20px; 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    .cart-items { 
+      padding: 20px;
+      min-height: calc(100% - 200px);
+    }
+    .cart-item { 
+      display: flex; 
+      margin-bottom: 15px; 
+      border-bottom: 1px solid #eee; 
+      padding-bottom: 15px;
+      align-items: center;
+    }
+    .cart-item img { 
+      width: 70px; 
+      height: 70px; 
+      object-fit: cover; 
+      border-radius: 8px; 
+      margin-right: 15px;
+    }
+    .cart-item-info { 
+      flex-grow: 1; 
+      text-align: left;
+    }
+    .cart-item-title { 
+      font-weight: bold; 
+      margin-bottom: 5px;
+      font-size: 1rem;
+    }
+    .cart-item-price { 
+      color: #1abc9c; 
+      font-weight: bold;
+      margin: 5px 0;
+    }
+    .cart-item-quantity {
+      display: flex;
+      align-items: center;
+      margin: 5px 0;
+    }
+    .quantity-btn {
+      width: 25px;
+      height: 25px;
+      background-color: #f4f7fa;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .quantity-value {
+      margin: 0 10px;
+    }
+    .cart-total { 
+      padding: 20px; 
+      border-top: 1px solid #eee; 
+      font-weight: bold; 
+      text-align: right;
+      background-color: #f9f9f9;
+      position: sticky;
+      bottom: 0;
+    }
+    .close-cart { 
+      cursor: pointer; 
+      font-size: 1.5rem;
+      transition: transform 0.2s;
+    }
+    .close-cart:hover {
+      transform: scale(1.2);
+    }
+    .remove-item { 
+      color: #e74c3c; 
+      cursor: pointer; 
+      font-size: 0.9rem;
+      display: inline-block;
+      margin-top: 5px;
+    }
+    .checkout-btn {
+      width: 100%;
+      padding: 12px;
+      background-color: #1abc9c;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: background-color 0.3s;
+    }
+    .checkout-btn:hover {
+      background-color: #16a085;
+    }
+    .empty-cart {
+      text-align: center;
+      padding: 30px;
+      color: #7f8c8d;
+    }
+    .empty-cart i {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      color: #bdc3c7;
+    }
+
+    /* Modal de confirmación y compra exitosa */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0,0,0,0.5);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-container {
+      background-color: white;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 500px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      animation: modalFadeIn 0.3s;
+    }
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .modal-header {
+      background-color: #2c3e50;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+    }
+    .modal-header h3 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    .modal-close {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    .modal-body {
+      padding: 25px;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+    .modal-footer {
+      padding: 15px 25px;
+      background-color: #f4f7fa;
+      display: flex;
+      justify-content: flex-end;
+      gap: 15px;
+    }
+    .modal-btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .modal-btn-primary {
+      background-color: #1abc9c;
+      color: white;
+    }
+    .modal-btn-secondary {
+      background-color: #bdc3c7;
+      color: #2c3e50;
+    }
+    .modal-btn:hover {
+      opacity: 0.9;
+    }
+    .order-summary {
+      margin-bottom: 20px;
+    }
+    .order-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed #eee;
+    }
+    .order-total {
+      font-weight: bold;
+      font-size: 1.2rem;
+      margin-top: 15px;
+      padding-top: 10px;
+      border-top: 2px solid #1abc9c;
+    }
+    .success-icon {
+      text-align: center;
+      font-size: 4rem;
+      color: #1abc9c;
+      margin: 20px 0;
+    }
+    .success-message {
+      text-align: center;
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+    }
+    
+    /* Estilos para la sección de contacto */
+    .contact-info {
+      text-align: left;
+      padding: 30px;
+    }
+    .contact-info h3 {
+      color: #2c3e50;
+      margin-top: 0;
+      font-size: 1.5rem;
+    }
+    .contact-detail {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .contact-detail i {
+      width: 40px;
+      height: 40px;
+      background-color: #1abc9c;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-right: 15px;
+      font-size: 1.2rem;
+    }
+    .contact-text {
+      flex-grow: 1;
+    }
+    .contact-text p {
+      margin: 5px 0;
+      color: #7f8c8d;
+    }
+    .contact-text a {
+      color: #1abc9c;
+      text-decoration: none;
+    }
+    .contact-text a:hover {
+      text-decoration: underline;
+    }
+    .contact-map {
+      width: 100%;
+      height: 250px;
+      border-radius: 12px;
+      margin-top: 20px;
+      border: none;
+    }
+
+    /* Modal de detalles del producto */
+    .product-detail-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0,0,0,0.8);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+    }
+    .product-detail-container {
+      background-color: white;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 800px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      animation: modalFadeIn 0.3s;
+    }
+    .product-detail-header {
+      background-color: #2c3e50;
+      color: white;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    .product-detail-body {
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
+    .product-detail-image {
+      width: 100%;
+      max-height: 300px;
+      object-fit: contain;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+    .product-detail-info {
+      flex-grow: 1;
+    }
+    .product-specs {
+      margin-top: 20px;
+    }
+    .spec-item {
+      display: flex;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    .spec-name {
+      font-weight: bold;
+      width: 150px;
+      color: #2c3e50;
+    }
+    .spec-value {
+      flex-grow: 1;
+    }
+    .product-detail-footer {
+      padding: 20px;
+      background-color: #f4f7fa;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .product-detail-price {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #1abc9c;
+    }
+    @media (min-width: 768px) {
+      .product-detail-body {
+        flex-direction: row;
+        gap: 30px;
+      }
+      .product-detail-image {
+        width: 40%;
+        max-height: none;
+      }
+    }
+
+    /* Estilos para el aviso de privacidad */
+    .privacy-link {
+      color: #1abc9c;
+      text-decoration: none;
+      margin-left: 10px;
+    }
+    .privacy-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <header>
+    <h1>ElectroTech - Tu tienda de productos electrónicos</h1>
+    <p>Ofertas personalizadas y tecnología a tu alcance</p>
+  </header>
+
+  <nav>
+    <a href="#productos">Productos</a>
+    <a href="#features">Funciones</a>
+    <a href="#contacto">Contacto</a>
+  </nav>
+
+  <section class="hero">
+    <h2>Descubre nuestros productos con recomendaciones personalizadas</h2>
+    <button onclick="document.getElementById('productos').scrollIntoView({behavior: 'smooth'})">Ver Recomendaciones</button>
+  </section>
+
+  <section id="productos" class="products">
+    <!-- Producto 1 - Laptop X2000 -->
+    <div class="product" data-product='{
+      "name": "Laptop X2000",
+      "price": 1299.99,
+      "image": "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
+      "description": "La Laptop X2000 ofrece rendimiento y velocidad para tus necesidades diarias con su potente procesador y memoria de alta velocidad.",
+      "specs": [
+        {"name": "Procesador", "value": "Intel Core i7 11va Gen"},
+        {"name": "Memoria RAM", "value": "16GB DDR4"},
+        {"name": "Almacenamiento", "value": "512GB SSD NVMe"},
+        {"name": "Pantalla", "value": "15.6\" Full HD IPS"},
+        {"name": "Sistema Operativo", "value": "Windows 11 Pro"},
+        {"name": "Batería", "value": "Hasta 10 horas"}
+      ]
+    }'>
+      <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600" alt="Laptop X2000">
+      <h3>Laptop X2000</h3>
+      <p>Rendimiento y velocidad para tus necesidades diarias.</p>
+      <p class="product-price">$1,299.99</p>
+      <button class="add-to-cart-btn">Agregar al carrito</button>
+    </div>
+
+    <!-- Producto 2 - Smartphone Z10 -->
+    <div class="product" data-product='{
+      "name": "Smartphone Z10",
+      "price": 799.99,
+      "image": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
+      "description": "El Smartphone Z10 cuenta con una cámara de alta definición y batería de larga duración para capturar tus momentos especiales.",
+      "specs": [
+        {"name": "Pantalla", "value": "6.7\" AMOLED 120Hz"},
+        {"name": "Procesador", "value": "Snapdragon 888"},
+        {"name": "Memoria", "value": "8GB RAM + 256GB"},
+        {"name": "Cámara Principal", "value": "108MP + 12MP + 8MP"},
+        {"name": "Batería", "value": "5000mAh"},
+        {"name": "Carga Rápida", "value": "65W"}
+      ]
+    }'>
+      <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600" alt="Smartphone Z10">
+      <h3>Smartphone Z10</h3>
+      <p>Cámara de alta definición y batería de larga duración.</p>
+      <p class="product-price">$799.99</p>
+      <button class="add-to-cart-btn">Agregar al carrito</button>
+    </div>
+
+    <!-- Producto 3 - Auriculares Pro -->
+    <div class="product" data-product='{
+      "name": "Auriculares Pro",
+      "price": 249.99,
+      "image": "https://agaval.vtexassets.com/arquivos/ids/1552258-800-600?v=638498248473670000&width=800&height=600&aspect=true",
+      "description": "Los Auriculares Pro ofrecen calidad de sonido envolvente con cancelación de ruido activa para una experiencia auditiva excepcional.",
+      "specs": [
+        {"name": "Tipo", "value": "Over-ear inalámbricos"},
+        {"name": "Cancelación de ruido", "value": "Activa (ANC)"},
+        {"name": "Autonomía", "value": "Hasta 30 horas"},
+        {"name": "Conexión", "value": "Bluetooth 5.0"},
+        {"name": "Micrófono", "value": "Integrado con reducción de ruido"},
+        {"name": "Resistencia", "value": "IPX4 (resistencia al agua)"}
+      ]
+    }'>
+      <img src="https://agaval.vtexassets.com/arquivos/ids/1552258-800-600?v=638498248473670000&width=800&height=600&aspect=true" alt="Auriculares Pro">
+      <h3>Auriculares Pro</h3>
+      <p>Calidad de sonido envolvente con cancelación de ruido.</p>
+      <p class="product-price">$249.99</p>
+      <button class="add-to-cart-btn">Agregar al carrito</button>
+    </div>
+
+    <!-- Producto 4 - Tablet S8 Ultra -->
+    <div class="product" data-product='{
+      "name": "Tablet S8 Ultra",
+      "price": 899.99,
+      "image": "https://images.samsung.com/is/image/samsung/p6pim/mx/sm-x900nzadmxo/gallery/mx-galaxy-tab-s8-ultra-wifi-x900-sm-x900nzadmxo-534245328?$684_547_JPG$",
+      "description": "La Tablet S8 Ultra cuenta con una pantalla Super AMOLED de 14.6\" y viene con S Pen incluido para máxima productividad.",
+      "specs": [
+        {"name": "Pantalla", "value": "14.6\" Super AMOLED"},
+        {"name": "Procesador", "value": "Exynos 2200"},
+        {"name": "Memoria", "value": "12GB RAM + 256GB"},
+        {"name": "S Pen", "value": "Incluido con 2.8ms de latencia"},
+        {"name": "Batería", "value": "11200mAh"},
+        {"name": "Sistema Operativo", "value": "Android 12"}
+      ]
+    }'>
+      <img src="https://images.samsung.com/is/image/samsung/p6pim/mx/sm-x900nzadmxo/gallery/mx-galaxy-tab-s8-ultra-wifi-x900-sm-x900nzadmxo-534245328?$684_547_JPG$" alt="Tablet S8 Ultra">
+      <h3>Tablet S8 Ultra</h3>
+      <p>Pantalla Super AMOLED de 14.6" con S Pen incluido.</p>
+      <p class="product-price">$899.99</p>
+      <button class="add-to-cart-btn">Agregar al carrito</button>
+    </div>
+
+    <!-- Producto 5 - Smartwatch Pro -->
+    <div class="product" data-product='{
+      "name": "Smartwatch Pro",
+      "price": 349.99,
+      "image": "https://images.unsplash.com/photo-1546868871-7041f2a55e12?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
+      "description": "El Smartwatch Pro ofrece monitoreo avanzado de salud con seguimiento de actividad las 24 horas y resistencia al agua para nadar.",
+      "specs": [
+        {"name": "Pantalla", "value": "1.78\" AMOLED táctil"},
+        {"name": "Resistencia", "value": "5ATM + IP68"},
+        {"name": "Monitoreo", "value": "Frecuencia cardíaca, oxígeno en sangre"},
+        {"name": "Batería", "value": "Hasta 14 días"},
+        {"name": "Compatibilidad", "value": "Android e iOS"},
+        {"name": "GPS", "value": "Integrado"}
+      ]
+    }'>
+      <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600" alt="Smartwatch Pro">
+      <h3>Smartwatch Pro</h3>
+      <p>Monitoreo avanzado de salud y resistencia al agua.</p>
+      <p class="product-price">$349.99</p>
+      <button class="add-to-cart-btn">Agregar al carrito</button>
+    </div>
+
+    <!-- Producto 6 - Dron 4K Pro -->
+    <div class="product" data-product='{
+      "name": "Dron 4K Pro",
+      "price": 599.99,
+      "image": "https://m.media-amazon.com/images/S/aplus-media-library-service-media/41701d55-e47b-4898-a8ca-f158f412fb9a.__CR0,0,800,600_PT0_SX800_V1___.jpg",
+      "description": "El Dron 4K Pro captura videos en 4K con estabilización, ofrece 30 minutos de vuelo y se controla fácilmente desde tu smartphone.",
+      "specs": [
+        {"name": "Cámara", "value": "4K UHD con estabilización 3 ejes"},
+        {"name": "Tiempo de vuelo", "value": "30 minutos"},
+        {"name": "Alcance", "value": "Hasta 8 km"},
+        {"name": "Velocidad", "value": "72 km/h"},
+        {"name": "Peso", "value": "795g"},
+        {"name": "Sensores", "value": "Obstáculos y retorno automático"}
+      ]
+    }'>
+      <img src="https://m.media-amazon.com/images/S/aplus-media-library-service-media/41701d55-e47b-4898-a8ca-f158f412fb9a.__CR0,0,800,600_PT0_SX800_V1___.jpg" alt="Dron 4K Pro">
+      <h3>Dron 4K Pro</h3>
+      <p>Cámara 4K, 30 min de vuelo y control por smartphone.</p>
+      <p class="product-price">$599.99</p>
+      <button class="add-to-cart-btn">Agregar al carrito</button>
+    </div>
+  </section>
+
+  <section id="features" class="features">
+    <div class="feature">
+      <img src="https://beaconinnovation.org/wp-content/uploads/2023/01/CHAT-GPT.webp" alt="Chatbot IA">
+      <h3>Chatbot IA</h3>
+      <p>Resuelve tus dudas al instante con nuestro asistente virtual.</p>
+      <button onclick="showNotification('Conectando con nuestro asistente virtual... Pronto estará disponible para ayudarte con todas tus consultas.')">Chatea ahora</button>
+    </div>
+    <div class="feature">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWfzykyNIG0nCdn753fbBbjv8Og9oFbPtz1A&s" alt="Compra Segura">
+      <h3>Compra Segura (Blockchain)</h3>
+      <p>Tus transacciones están protegidas con la tecnología más avanzada.</p>
+      <button onclick="showNotification('Todas tus compras están protegidas con tecnología blockchain para máxima seguridad en tus transacciones.')">Más información</button>
+    </div>
+    <div class="feature">
+      <img src="https://blog.uvm.mx/hs-fs/hubfs/Blog_Contenido/UG/realidad-virtual-que-estudiar-para-dedicarme-a-ello-2.jpg?width=800&height=600&name=realidad-virtual-que-estudiar-para-dedicarme-a-ello-2.jpg" alt="Realidad Aumentada">
+      <h3>Realidad Aumentada</h3>
+      <p>Prueba nuestros productos en 3D desde tu casa.</p>
+      <button onclick="showNotification('La función de Realidad Aumentada estará disponible próximamente. Podrás ver nuestros productos en tu espacio antes de comprar.')">Ver en RA</button>
+    </div>
+    <div class="feature">
+      <img src="https://images.unsplash.com/photo-1603791440384-56cd371ee9a7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600" alt="Omnicanal">
+      <h3>Omnicanal</h3>
+      <p>Contáctanos por redes sociales, correo o WhatsApp.</p>
+      <button onclick="showNotification('Estamos disponibles en múltiples canales. Escríbenos a WhatsApp al 55 2407 7968 o en nuestras redes sociales @ElectroTechMX')">Hablar por WhatsApp</button>
+    </div>
+    <div class="feature">
+      <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600" alt="Ofertas Personalizadas">
+      <h3>Ofertas Personalizadas</h3>
+      <p>Recibe promociones basadas en tus compras anteriores.</p>
+      <button onclick="showNotification('Regístrate para recibir ofertas personalizadas según tus intereses y compras anteriores. ¡Ahorra hasta un 30%!')">Regístrate</button>
+    </div>
+  </section>
+
+  <!-- Sección de Contacto -->
+  <section id="contacto" class="contact-section">
+    <div class="contact-info">
+      <h3>Información de Contacto</h3>
+      
+      <div class="contact-detail">
+        <i class="fas fa-envelope"></i>
+        <div class="contact-text">
+          <p><strong>Correo Electrónico</strong></p>
+          <p><a href="mailto:eduardo2060@live.com.mx">eduardo2060@live.com.mx</a></p>
+        </div>
+      </div>
+      
+      <div class="contact-detail">
+        <i class="fas fa-map-marker-alt"></i>
+        <div class="contact-text">
+          <p><strong>Dirección</strong></p>
+          <p>Legión India 3664, Tlalnepantla, Estado de México</p>
+        </div>
+      </div>
+      
+      <div class="contact-detail">
+        <i class="fas fa-phone"></i>
+        <div class="contact-text">
+          <p><strong>Teléfono</strong></p>
+          <p><a href="tel:5524077968">55 2407 7968</a></p>
+        </div>
+      </div>
+      
+      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3760.611315686685!2d-99.18572292416464!3d19.5101237381581!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d1f8bd9777a765%3A0x57501a5479751d18!2sLegi%C3%B3n%20India%203664%2C%20San%20Juan%20Ixtacala%20Nte.%2C%2054100%20Tlalnepantla%20de%20Baz%2C%20M%C3%A9x.!5e0!3m2!1ses-419!2smx!4v1712100000000!5m2!1ses-419!2smx" class="contact-map" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+    
+    <div class="contact-info">
+      <h3>Horario de Atención</h3>
+      <div class="contact-detail">
+        <i class="fas fa-clock"></i>
+        <div class="contact-text">
+          <p><strong>Lunes a Viernes:</strong> 9:00 AM - 7:00 PM</p>
+          <p><strong>Sábados:</strong> 10:00 AM - 4:00 PM</p>
+          <p><strong>Domingos:</strong> Cerrado</p>
+        </div>
+      </div>
+      
+      <h3 style="margin-top: 30px;">Envíanos un Mensaje</h3>
+      <form>
+        <div style="margin-bottom: 15px;">
+          <label for="name" style="display: block; margin-bottom: 5px; color: #2c3e50;">Nombre:</label>
+          <input type="text" id="name" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+          <label for="email" style="display: block; margin-bottom: 5px; color: #2c3e50;">Correo:</label>
+          <input type="email" id="email" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+          <label for="message" style="display: block; margin-bottom: 5px; color: #2c3e50;">Mensaje:</label>
+          <textarea id="message" rows="4" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;"></textarea>
+        </div>
+        
+        <button type="button" onclick="sendMessage()" style="width: 100%;">Enviar Mensaje</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Carrito flotante -->
+  <div class="floating-cart" onclick="toggleCart()">
+    <i class="fas fa-shopping-cart"></i>
+    <div class="cart-count" id="cartCount">0</div>
+  </div>
+
+  <!-- Modal del carrito -->
+  <div class="cart-modal" id="cartModal">
+    <div class="cart-header">
+      <h3>Tu Carrito de Compras</h3>
+      <span class="close-cart" onclick="toggleCart()">&times;</span>
+    </div>
+    <div class="cart-items" id="cartItems">
+      <!-- Los productos del carrito se añadirán aquí dinámicamente -->
+    </div>
+    <div class="cart-total">
+      Total: $<span id="cartTotal">0.00</span>
+      <button class="checkout-btn" onclick="checkout()">Finalizar Compra</button>
+    </div>
+  </div>
+
+  <!-- Modal de confirmación de compra -->
+  <div class="modal-overlay" id="confirmModal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3>Confirmar Compra</h3>
+        <span class="modal-close" onclick="closeModal('confirmModal')">&times;</span>
+      </div>
+      <div class="modal-body" id="confirmModalBody">
+        <!-- Contenido dinámico con el resumen de compra -->
+      </div>
+      <div class="modal-footer">
+        <button class="modal-btn modal-btn-secondary" onclick="closeModal('confirmModal')">Cancelar</button>
+        <button class="modal-btn modal-btn-primary" onclick="processPayment()">Confirmar Pago</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de compra exitosa -->
+  <div class="modal-overlay" id="successModal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3>¡Compra Exitosa!</h3>
+        <span class="modal-close" onclick="closeModal('successModal')">&times;</span>
+      </div>
+      <div class="modal-body">
+        <div class="success-icon">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="success-message" id="successMessage">
+          Tu compra se ha realizado con éxito. ¡Gracias por tu preferencia!
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-btn modal-btn-primary" onclick="closeModal('successModal')">Aceptar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de características del producto -->
+  <div class="product-detail-modal" id="productDetailModal">
+    <div class="product-detail-container">
+      <div class="product-detail-header">
+        <h3 id="detailProductName"></h3>
+        <span class="modal-close" onclick="closeProductDetail()">&times;</span>
+      </div>
+      <div class="product-detail-body">
+        <img id="detailProductImage" class="product-detail-image" src="" alt="">
+        <div class="product-detail-info">
+          <p id="detailProductDescription"></p>
+          <div class="product-specs" id="detailProductSpecs"></div>
+        </div>
+      </div>
+      <div class="product-detail-footer">
+        <div class="product-detail-price" id="detailProductPrice"></div>
+        <button class="modal-btn modal-btn-primary" onclick="addDetailToCart()">Agregar al carrito</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 ElectroTech | Todos los derechos reservados <a href="#privacy" class="privacy-link" onclick="showPrivacyNotice()">Aviso de Privacidad</a></p>
+  </footer>
+
+  <script>
+    let cart = [];
+    let currentProduct = null;
+
+    // Función para mostrar/ocultar el carrito
+    function toggleCart() {
+      const cartModal = document.getElementById('cartModal');
+      if (cartModal.style.display === 'block') {
+        cartModal.style.display = 'none';
+      } else {
+        cartModal.style.display = 'block';
+        updateCartDisplay();
+      }
+    }
+    
+    // Función para agregar productos al carrito
+    function addToCart(name, price, image, event) {
+      if (event) event.stopPropagation();
+      
+      // Buscar si el producto ya está en el carrito
+      const existingItem = cart.find(item => item.name === name);
+      
+      if (existingItem) {
+        existingItem.quantity += 1;
+      } else {
+        cart.push({
+          name: name,
+          price: price,
+          image: image,
+          quantity: 1
+        });
+      }
+      
+      // Actualizar la interfaz
+      updateCartCount();
+      updateCartDisplay();
+      
+      // Mostrar notificación flotante
+      showNotification(`${name} agregado al carrito`);
+    }
+    
+    // Función para eliminar un producto del carrito
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      updateCartCount();
+      updateCartDisplay();
+      showNotification('Producto eliminado del carrito');
+    }
+    
+    // Función para actualizar la cantidad de un producto
+    function updateQuantity(index, change) {
+      const item = cart[index];
+      item.quantity += change;
+      
+      if (item.quantity < 1) {
+        removeFromCart(index);
+      } else {
+        updateCartCount();
+        updateCartDisplay();
+      }
+    }
+    
+    // Función para actualizar el contador del carrito
+    function updateCartCount() {
+      const count = cart.reduce((total, item) => total + item.quantity, 0);
+      document.getElementById('cartCount').textContent = count;
+      
+      // Animación cuando se agrega un producto
+      if (count > 0) {
+        const cartIcon = document.querySelector('.floating-cart');
+        cartIcon.style.animation = 'none';
+        void cartIcon.offsetWidth; // Trigger reflow
+        cartIcon.style.animation = 'bounce 0.5s';
+      }
+    }
+    
+    // Función para actualizar la visualización del carrito
+    function updateCartDisplay() {
+      const cartItemsElement = document.getElementById('cartItems');
+      const cartTotalElement = document.getElementById('cartTotal');
+      
+      // Limpiar el carrito
+      cartItemsElement.innerHTML = '';
+      
+      // Si el carrito está vacío
+      if (cart.length === 0) {
+        cartItemsElement.innerHTML = `
+          <div class="empty-cart">
+            <i class="fas fa-shopping-cart"></i>
+            <p>Tu carrito está vacío</p>
+          </div>
+        `;
+        cartTotalElement.textContent = '0.00';
+        return;
+      }
+      
+      // Agregar cada producto al carrito
+      let total = 0;
+      cart.forEach((item, index) => {
+        total += item.price * item.quantity;
+        
+        const itemElement = document.createElement('div');
+        itemElement.className = 'cart-item';
+        itemElement.innerHTML = `
+          <img src="${item.image}" alt="${item.name}">
+          <div class="cart-item-info">
+            <div class="cart-item-title">${item.name}</div>
+            <div class="cart-item-price">$${item.price.toFixed(2)} c/u</div>
+            <div class="cart-item-quantity">
+              <button class="quantity-btn" onclick="updateQuantity(${index}, -1)">-</button>
+              <span class="quantity-value">${item.quantity}</span>
+              <button class="quantity-btn" onclick="updateQuantity(${index}, 1)">+</button>
+            </div>
+            <div class="cart-item-price">Total: $${(item.price * item.quantity).toFixed(2)}</div>
+            <div class="remove-item" onclick="removeFromCart(${index})">
+              <i class="fas fa-trash-alt"></i> Eliminar
+            </div>
+          </div>
+        `;
+        
+        cartItemsElement.appendChild(itemElement);
+      });
+      
+      // Actualizar el total
+      cartTotalElement.textContent = total.toFixed(2);
+    }
+    
+    // Función para finalizar la compra
+    function checkout() {
+      if (cart.length === 0) {
+        showNotification('Tu carrito está vacío. Agrega productos antes de finalizar la compra.');
+        return;
+      }
+      
+      // Calcular total y preparar resumen
+      const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      let summaryHTML = `
+        <div class="order-summary">
+          <h4>Resumen de tu compra:</h4>
+      `;
+      
+      cart.forEach(item => {
+        summaryHTML += `
+          <div class="order-item">
+            <span>${item.name} (${item.quantity})</span>
+            <span>$${(item.price * item.quantity).toFixed(2)}</span>
+          </div>
+        `;
+      });
+      
+      summaryHTML += `
+          <div class="order-total">
+            <span>Total:</span>
+            <span>$${total.toFixed(2)}</span>
+          </div>
+        </div>
+        <p>¿Deseas proceder con el pago?</p>
+      `;
+      
+      // Mostrar modal de confirmación
+      document.getElementById('confirmModalBody').innerHTML = summaryHTML;
+      openModal('confirmModal');
+    }
+    
+    // Función para procesar el pago (simulado)
+    function processPayment() {
+      closeModal('confirmModal');
+      
+      // Simular procesamiento de pago
+      setTimeout(() => {
+        const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        document.getElementById('successMessage').innerHTML = `
+          Tu compra por <strong>$${total.toFixed(2)}</strong> se ha realizado con éxito.<br>
+          Recibirás un correo con los detalles de tu pedido.
+        `;
+        
+        openModal('successModal');
+        
+        // Vaciar el carrito después de la compra
+        cart = [];
+        updateCartCount();
+        updateCartDisplay();
+        toggleCart();
+      }, 1500);
+    }
+    
+    // Función para enviar mensaje de contacto
+    function sendMessage() {
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const message = document.getElementById('message').value;
+      
+      if (!name || !email || !message) {
+        showNotification('Por favor completa todos los campos');
+        return;
+      }
+      
+      // Simular envío de mensaje
+      showNotification('Mensaje enviado con éxito. Nos pondremos en contacto contigo pronto.');
+      
+      // Limpiar formulario
+      document.getElementById('name').value = '';
+      document.getElementById('email').value = '';
+      document.getElementById('message').value = '';
+    }
+    
+    // Funciones para manejar modales
+    function openModal(modalId) {
+      document.getElementById(modalId).style.display = 'flex';
+    }
+    
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = 'none';
+    }
+
+    // Función para mostrar los detalles del producto
+    function showProductDetail(product) {
+      currentProduct = product;
+      
+      // Actualizar el modal con la información del producto
+      document.getElementById('detailProductName').textContent = product.name;
+      document.getElementById('detailProductImage').src = product.image;
+      document.getElementById('detailProductImage').alt = product.name;
+      document.getElementById('detailProductDescription').textContent = product.description;
+      document.getElementById('detailProductPrice').textContent = `$${product.price.toFixed(2)}`;
+      
+      // Generar las especificaciones
+      const specsContainer = document.getElementById('detailProductSpecs');
+      specsContainer.innerHTML = '<h4>Especificaciones:</h4>';
+      
+      product.specs.forEach(spec => {
+        const specElement = document.createElement('div');
+        specElement.className = 'spec-item';
+        specElement.innerHTML = `
+          <div class="spec-name">${spec.name}</div>
+          <div class="spec-value">${spec.value}</div>
+        `;
+        specsContainer.appendChild(specElement);
+      });
+      
+      // Mostrar el modal
+      document.getElementById('productDetailModal').style.display = 'flex';
+    }
+
+    // Función para cerrar el modal de detalles
+    function closeProductDetail() {
+      document.getElementById('productDetailModal').style.display = 'none';
+      currentProduct = null;
+    }
+
+    // Función para agregar el producto desde el modal de detalles
+    function addDetailToCart() {
+      if (currentProduct) {
+        addToCart(currentProduct.name, currentProduct.price, currentProduct.image);
+        closeProductDetail();
+      }
+    }
+    
+    // Función para mostrar notificaciones flotantes
+    function showNotification(message) {
+      const notification = document.createElement('div');
+      notification.style.position = 'fixed';
+      notification.style.bottom = '20px';
+      notification.style.left = '50%';
+      notification.style.transform = 'translateX(-50%)';
+      notification.style.backgroundColor = '#2c3e50';
+      notification.style.color = 'white';
+      notification.style.padding = '12px 24px';
+      notification.style.borderRadius = '30px';
+      notification.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+      notification.style.zIndex = '1001';
+      notification.style.animation = 'fadeInOut 3s';
+      notification.textContent = message;
+      
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.remove();
+      }, 3000);
+    }
+    
+    // Función para mostrar el aviso de privacidad
+    function showPrivacyNotice() {
+      const privacyHTML = `
+        <h3>Aviso de Privacidad</h3>
+        <p>En ElectroTech, respetamos y protegemos tu privacidad. Este aviso describe cómo recopilamos, usamos y protegemos tu información personal.</p>
+        
+        <h4>Información que recopilamos:</h4>
+        <p>Recopilamos información que nos proporcionas al realizar compras, registrarte en nuestro sitio o contactarnos. Esto puede incluir nombre, dirección, correo electrónico y datos de pago.</p>
+        
+        <h4>Uso de la información:</h4>
+        <p>Utilizamos tu información para procesar compras, mejorar nuestros servicios, comunicarnos contigo y personalizar tu experiencia.</p>
+        
+        <h4>Protección de datos:</h4>
+        <p>Implementamos medidas de seguridad para proteger tu información contra accesos no autorizados o divulgación.</p>
+        
+        <h4>Tus derechos:</h4>
+        <p>Tienes derecho a acceder, rectificar o cancelar tus datos personales. Para ejercer estos derechos, contáctanos a través de los medios proporcionados.</p>
+      `;
+      
+      // Crear modal para el aviso de privacidad
+      const modalContainer = document.createElement('div');
+      modalContainer.className = 'modal-overlay';
+      modalContainer.style.display = 'flex';
+      modalContainer.innerHTML = `
+        <div class="modal-container">
+          <div class="modal-header">
+            <h3>Aviso de Privacidad</h3>
+            <span class="modal-close" onclick="this.parentElement.parentElement.parentElement.remove()">&times;</span>
+          </div>
+          <div class="modal-body">
+            ${privacyHTML}
+          </div>
+          <div class="modal-footer">
+            <button class="modal-btn modal-btn-primary" onclick="this.parentElement.parentElement.parentElement.remove()">Aceptar</button>
+          </div>
+        </div>
+      `;
+      
+      document.body.appendChild(modalContainer);
+    }
+    
+    // Manejador para mostrar detalles del producto
+    document.addEventListener('DOMContentLoaded', function() {
+      // Configurar event listeners para los productos
+      document.querySelectorAll('.product').forEach(productElement => {
+        productElement.addEventListener('click', function(e) {
+          // Si el clic fue en el botón, no hacer nada
+          if (e.target.closest('.add-to-cart-btn')) return;
+          
+          const productData = JSON.parse(this.getAttribute('data-product'));
+          showProductDetail(productData);
+        });
+      });
+
+      // Manejador para agregar al carrito
+      document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+          e.stopPropagation(); // Evitar que el clic llegue al contenedor del producto
+          const productElement = this.closest('.product');
+          const productData = JSON.parse(productElement.getAttribute('data-product'));
+          addToCart(productData.name, productData.price, productData.image);
+        });
+      });
+    });
+    
+    // Cerrar el carrito al hacer clic fuera de él
+    window.onclick = function(event) {
+      const cartModal = document.getElementById('cartModal');
+      if (event.target === cartModal) {
+        cartModal.style.display = 'none';
+      }
+      
+      // Cerrar modales al hacer clic fuera
+      const modals = ['confirmModal', 'successModal', 'productDetailModal'];
+      modals.forEach(modalId => {
+        const modal = document.getElementById(modalId);
+        if (event.target === modal) {
+          if (modalId === 'productDetailModal') {
+            closeProductDetail();
+          } else {
+            closeModal(modalId);
+          }
+        }
+      });
+    }
+    
+    // Añadir animación de rebote
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+        40% {transform: translateY(-20px);}
+        60% {transform: translateY(-10px);}
+      }
+      @keyframes fadeInOut {
+        0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+        10% { opacity: 1; transform: translateX(-50%) translateY(0); }
+        90% { opacity: 1; transform: translateX(-50%) translateY(0); }
+        100% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+      }
+      @keyframes modalFadeIn {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes slideIn {
+        from { transform: translateX(100%); }
+        to { transform: translateX(0); }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>
