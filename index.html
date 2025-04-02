@@ -65,7 +65,7 @@
       right: -5px;
     }
     
-    /* Modal del carrito mejorado */
+    /* Modal del carrito */
     .cart-modal { 
       display: none; 
       position: fixed; 
@@ -795,7 +795,7 @@
       }
     }
     
-    // Función para agregar productos al carrito
+    // agregar productos al carrito
     function addToCart(name, price, image, event) {
       if (event) event.stopPropagation();
       
@@ -821,7 +821,7 @@
       showNotification(`${name} agregado al carrito`);
     }
     
-    // Función para eliminar un producto del carrito
+    // eliminar un producto del carrito
     function removeFromCart(index) {
       cart.splice(index, 1);
       updateCartCount();
@@ -829,7 +829,7 @@
       showNotification('Producto eliminado del carrito');
     }
     
-    // Función para actualizar la cantidad de un producto
+    // actualizar la cantidad de un producto
     function updateQuantity(index, change) {
       const item = cart[index];
       item.quantity += change;
@@ -842,7 +842,7 @@
       }
     }
     
-    // Función para actualizar el contador del carrito
+    // actualizar el contador del carrito
     function updateCartCount() {
       const count = cart.reduce((total, item) => total + item.quantity, 0);
       document.getElementById('cartCount').textContent = count;
@@ -856,7 +856,7 @@
       }
     }
     
-    // Función para actualizar la visualización del carrito
+    // actualizar la visualización del carrito
     function updateCartDisplay() {
       const cartItemsElement = document.getElementById('cartItems');
       const cartTotalElement = document.getElementById('cartTotal');
@@ -907,7 +907,7 @@
       cartTotalElement.textContent = total.toFixed(2);
     }
     
-    // Función para finalizar la compra
+    // finalizar la compra
     function checkout() {
       if (cart.length === 0) {
         showNotification('Tu carrito está vacío. Agrega productos antes de finalizar la compra.');
@@ -939,16 +939,16 @@
         <p>¿Deseas proceder con el pago?</p>
       `;
       
-      // Mostrar modal de confirmación
+      // confirmación
       document.getElementById('confirmModalBody').innerHTML = summaryHTML;
       openModal('confirmModal');
     }
     
-    // Función para procesar el pago (simulado)
+    // procesar el pago
     function processPayment() {
       closeModal('confirmModal');
       
-      // Simular procesamiento de pago
+      //procesamiento de pago
       setTimeout(() => {
         const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
         document.getElementById('successMessage').innerHTML = `
@@ -966,7 +966,7 @@
       }, 1500);
     }
     
-    // Función para enviar mensaje de contacto
+    //enviar mensaje de contacto
     function sendMessage() {
       const name = document.getElementById('name').value;
       const email = document.getElementById('email').value;
@@ -977,7 +977,7 @@
         return;
       }
       
-      // Simular envío de mensaje
+      // envío de mensaje
       showNotification('Mensaje enviado con éxito. Nos pondremos en contacto contigo pronto.');
       
       // Limpiar formulario
@@ -986,7 +986,7 @@
       document.getElementById('message').value = '';
     }
     
-    // Funciones para manejar modales
+    // manejar modales
     function openModal(modalId) {
       document.getElementById(modalId).style.display = 'flex';
     }
@@ -995,7 +995,7 @@
       document.getElementById(modalId).style.display = 'none';
     }
 
-    // Función para mostrar los detalles del producto
+    // mostrar los detalles del producto
     function showProductDetail(product) {
       currentProduct = product;
       
@@ -1024,13 +1024,13 @@
       document.getElementById('productDetailModal').style.display = 'flex';
     }
 
-    // Función para cerrar el modal de detalles
+    // cerrar el modal 
     function closeProductDetail() {
       document.getElementById('productDetailModal').style.display = 'none';
       currentProduct = null;
     }
 
-    // Función para agregar el producto desde el modal de detalles
+    // agregar el producto desde detalles
     function addDetailToCart() {
       if (currentProduct) {
         addToCart(currentProduct.name, currentProduct.price, currentProduct.image);
@@ -1038,7 +1038,7 @@
       }
     }
     
-    // Función para mostrar notificaciones flotantes
+    // notificaciones flotantes
     function showNotification(message) {
       const notification = document.createElement('div');
       notification.style.position = 'fixed';
@@ -1061,7 +1061,7 @@
       }, 3000);
     }
     
-    // Función para mostrar el aviso de privacidad
+    //  aviso de privacidad
     function showPrivacyNotice() {
       const privacyHTML = `
         <h3>Aviso de Privacidad</h3>
@@ -1080,7 +1080,7 @@
         <p>Tienes derecho a acceder, rectificar o cancelar tus datos personales. Para ejercer estos derechos, contáctanos a través de los medios proporcionados.</p>
       `;
       
-      // Crear modal para el aviso de privacidad
+      // m aviso de privacidad
       const modalContainer = document.createElement('div');
       modalContainer.className = 'modal-overlay';
       modalContainer.style.display = 'flex';
@@ -1102,9 +1102,9 @@
       document.body.appendChild(modalContainer);
     }
     
-    // Manejador para mostrar detalles del producto
+    // mostrar detalles del producto
     document.addEventListener('DOMContentLoaded', function() {
-      // Configurar event listeners para los productos
+      // event listeners para los productos
       document.querySelectorAll('.product').forEach(productElement => {
         productElement.addEventListener('click', function(e) {
           // Si el clic fue en el botón, no hacer nada
@@ -1126,14 +1126,14 @@
       });
     });
     
-    // Cerrar el carrito al hacer clic fuera de él
+    // carrito
     window.onclick = function(event) {
       const cartModal = document.getElementById('cartModal');
       if (event.target === cartModal) {
         cartModal.style.display = 'none';
       }
       
-      // Cerrar modales al hacer clic fuera
+      // Cerrar modales
       const modals = ['confirmModal', 'successModal', 'productDetailModal'];
       modals.forEach(modalId => {
         const modal = document.getElementById(modalId);
@@ -1147,7 +1147,7 @@
       });
     }
     
-    // Añadir animación de rebote
+    // animación de rebote
     const style = document.createElement('style');
     style.textContent = `
       @keyframes bounce {
@@ -1170,7 +1170,7 @@
         to { transform: translateX(0); }
       }
     `;
-    document.head.appendChild(style);
+    document.head.appendChild(style);   
   </script>
 </body>
 </html>
